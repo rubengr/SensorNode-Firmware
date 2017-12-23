@@ -30,3 +30,5 @@ stm32l053c8_discovery\main.o: ../Drivers/STM32L0xx_HAL_Driver/Inc/stm32l0xx_hal_
 stm32l053c8_discovery\main.o: ../Drivers/STM32L0xx_HAL_Driver/Inc/stm32l0xx_hal_uart.h
 stm32l053c8_discovery\main.o: ../Drivers/STM32L0xx_HAL_Driver/Inc/stm32l0xx_hal_uart_ex.h
 stm32l053c8_discovery\main.o: ../Drivers/BSP/STM32L0538-Discovery/stm32l0538_discovery.h
+stm32l053c8_discovery\main.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\string.h
+stm32l053c8_discovery\main.o: ../Src/SensorNode/LPUART.h

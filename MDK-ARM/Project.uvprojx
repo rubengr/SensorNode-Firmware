@@ -636,9 +636,19 @@
               <FilePath>../Src/stm32l0xx_it.c</FilePath>
             </File>
             <File>
+              <FileName>LPUART.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Src\SensorNode\LPUART.c</FilePath>
+            </File>
+            <File>
               <FileName>main.c</FileName>
               <FileType>1</FileType>
               <FilePath>../Src/main.c</FilePath>
+            </File>
+            <File>
+              <FileName>LPUART.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\Src\SensorNode\LPUART.h</FilePath>
             </File>
           </Files>
         </Group>
@@ -674,18 +684,6 @@
         </Group>
         <Group>
           <GroupName>SensorNode</GroupName>
-          <Files>
-            <File>
-              <FileName>LPUART.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\Src\SensorNode\LPUART.c</FilePath>
-            </File>
-            <File>
-              <FileName>LPUART.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>.\LPUART.h</FilePath>
-            </File>
-          </Files>
         </Group>
         <Group>
           <GroupName>::CMSIS</GroupName>

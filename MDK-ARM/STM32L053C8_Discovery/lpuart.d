@@ -1,5 +1,5 @@
 stm32l053c8_discovery\lpuart.o: ..\Src\SensorNode\LPUART.c
-stm32l053c8_discovery\lpuart.o: ../Inc/main.h
+stm32l053c8_discovery\lpuart.o: ..\Src\SensorNode\LPUART.h
 stm32l053c8_discovery\lpuart.o: ../Drivers/STM32L0xx_HAL_Driver/Inc/stm32l0xx_hal.h
 stm32l053c8_discovery\lpuart.o: ../Inc/stm32l0xx_hal_conf.h
 stm32l053c8_discovery\lpuart.o: ../Drivers/STM32L0xx_HAL_Driver/Inc/stm32l0xx_hal_rcc.h
@@ -30,3 +30,4 @@ stm32l053c8_discovery\lpuart.o: ../Drivers/STM32L0xx_HAL_Driver/Inc/stm32l0xx_ha
 stm32l053c8_discovery\lpuart.o: ../Drivers/STM32L0xx_HAL_Driver/Inc/stm32l0xx_hal_uart.h
 stm32l053c8_discovery\lpuart.o: ../Drivers/STM32L0xx_HAL_Driver/Inc/stm32l0xx_hal_uart_ex.h
 stm32l053c8_discovery\lpuart.o: ../Drivers/BSP/STM32L0538-Discovery/stm32l0538_discovery.h
+stm32l053c8_discovery\lpuart.o: ../Inc/main.h

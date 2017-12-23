@@ -32,11 +32,113 @@
   *
   ******************************************************************************
   */
-#include "main.h"
+#include "LPUART.h"
 
+UART_HandleTypeDef UartHandle;
 
 /* Private function prototypes -----------------------------------------------*/
 
 
+void vLPUART_Init (void){
+	 /*##-1- Configure the LPUART peripheral ######################################*/
+  /* Put the USART peripheral in the Asynchronous mode (UART Mode) */
+  /* LPUART configured as follows:
+      - Word Length = 8 Bits
+      - Stop Bit = One Stop bit
+      - Parity = None
+      - BaudRate = 9600 baud
+      - Hardware flow control disabled (RTS and CTS signals) */
+   
+  UartHandle.Instance        = USARTx;
+  HAL_UART_DeInit(&UartHandle); 
+
+  UartHandle.Init.BaudRate   = 9600;
+  UartHandle.Init.WordLength = UART_WORDLENGTH_8B;
+  UartHandle.Init.StopBits   = UART_STOPBITS_1;
+  UartHandle.Init.Parity     = UART_PARITY_NONE;
+  UartHandle.Init.HwFlowCtl  = UART_HWCONTROL_NONE;
+  UartHandle.Init.Mode       = UART_MODE_TX_RX;
+  UartHandle.AdvancedInit.AdvFeatureInit = UART_ADVFEATURE_NO_INIT;
+  
+  
+  if(HAL_UART_Init(&UartHandle) != HAL_OK)
+  {
+    Error_Handler();
+  }
+	
+}
+
+
+/**
+  * @brief  UART error callbacks
+  * @param  UartHandle: UART handle
+  * @note   This example shows a simple way to report transfer error, and you can
+  *         add your own implementation.
+  * @retval None
+  */
+void HAL_UART_ErrorCallback(UART_HandleTypeDef *UartHandle)
+{
+  Error_Handler();
+}
+
+/**
+  * @brief UART wakeup from Stop mode callback
+  * @param huart: uart handle
+  * @retval None
+  */
+void HAL_UARTEx_WakeupCallback(UART_HandleTypeDef *huart)
+{
+  /* Turn back on LED3 */
+    BSP_LED_On(LED3);
+}
+
+/**
+  * @brief  This function is executed in case of error occurrence.
+  * @param  None
+  * @retval None
+  */
+void Error_Handler(void)
+{
+  while(1)
+  {
+    /* In case of error, LED3 transmits a sequence of three dots, three dashes, three dots */
+    BSP_LED_On(LED3); 
+    HAL_Delay(300);
+    BSP_LED_Off(LED3);
+    HAL_Delay(300); 
+    BSP_LED_On(LED3); 
+    HAL_Delay(300);
+    BSP_LED_Off(LED3);
+    HAL_Delay(300);  
+    BSP_LED_On(LED3); 
+    HAL_Delay(300);
+    BSP_LED_Off(LED3);
+    HAL_Delay(300);   
+    BSP_LED_On(LED3); 
+    HAL_Delay(700);
+    BSP_LED_Off(LED3);
+    HAL_Delay(700); 
+    BSP_LED_On(LED3); 
+    HAL_Delay(700);
+    BSP_LED_Off(LED3);
+    HAL_Delay(700);  
+    BSP_LED_On(LED3); 
+    HAL_Delay(700);
+    BSP_LED_Off(LED3);
+    HAL_Delay(700); 
+    BSP_LED_On(LED3); 
+    HAL_Delay(300);
+    BSP_LED_Off(LED3);
+    HAL_Delay(300); 
+    BSP_LED_On(LED3); 
+    HAL_Delay(300);
+    BSP_LED_Off(LED3);
+    HAL_Delay(300);  
+    BSP_LED_On(LED3); 
+    HAL_Delay(300);
+    BSP_LED_Off(LED3);
+    HAL_Delay(800); 
+  }
+}
 
 

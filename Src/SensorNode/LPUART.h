@@ -39,8 +39,11 @@
 /* Includes ------------------------------------------------------------------*/
 #include "stm32l0xx_hal.h"
 #include "stm32l0538_discovery.h"
+#include "main.h"
 
-
+extern UART_HandleTypeDef UartHandle;
+void Error_Handler(void);
+void vLPUART_Init (void);
 
 
 #endif /* __LPUART_H */
