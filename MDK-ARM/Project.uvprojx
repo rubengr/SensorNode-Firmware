@@ -620,6 +620,11 @@
               <FileType>1</FileType>
               <FilePath>..\Drivers\STM32L0xx_HAL_Driver\Src\stm32l0xx_hal_wwdg.c</FilePath>
             </File>
+            <File>
+              <FileName>stm32l0xx_hal_tim.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\Drivers\STM32L0xx_HAL_Driver\Inc\stm32l0xx_hal_tim.h</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
@@ -636,19 +641,9 @@
               <FilePath>../Src/stm32l0xx_it.c</FilePath>
             </File>
             <File>
-              <FileName>LPUART.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\Src\SensorNode\LPUART.c</FilePath>
-            </File>
-            <File>
               <FileName>main.c</FileName>
               <FileType>1</FileType>
               <FilePath>../Src/main.c</FilePath>
-            </File>
-            <File>
-              <FileName>LPUART.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>..\Src\SensorNode\LPUART.h</FilePath>
             </File>
           </Files>
         </Group>
@@ -684,6 +679,28 @@
         </Group>
         <Group>
           <GroupName>SensorNode</GroupName>
+          <Files>
+            <File>
+              <FileName>LPUART.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\Src\SensorNode\LPUART.h</FilePath>
+            </File>
+            <File>
+              <FileName>LPUART.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Src\SensorNode\LPUART.c</FilePath>
+            </File>
+            <File>
+              <FileName>ADC.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Src\SensorNode\ADC.c</FilePath>
+            </File>
+            <File>
+              <FileName>ADC.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\Src\SensorNode\ADC.h</FilePath>
+            </File>
+          </Files>
         </Group>
         <Group>
           <GroupName>::CMSIS</GroupName>

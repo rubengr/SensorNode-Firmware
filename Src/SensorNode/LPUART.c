@@ -69,6 +69,16 @@ void vLPUART_Init (void){
 }
 
 
+bool bLPUART_Transmit (char* message) {
+	
+	if (HAL_UART_Transmit(&UartHandle,(uint8_t *) message, strlen(message), 5000)!= HAL_OK)  
+  {
+    Error_Handler();
+		return false;
+  }
+	return true;
+}
+
 /**
   * @brief  UART error callbacks
   * @param  UartHandle: UART handle
@@ -92,53 +102,5 @@ void HAL_UARTEx_WakeupCallback(UART_HandleTypeDef *huart)
     BSP_LED_On(LED3);
 }
 
-/**
-  * @brief  This function is executed in case of error occurrence.
-  * @param  None
-  * @retval None
-  */
-void Error_Handler(void)
-{
-  while(1)
-  {
-    /* In case of error, LED3 transmits a sequence of three dots, three dashes, three dots */
-    BSP_LED_On(LED3); 
-    HAL_Delay(300);
-    BSP_LED_Off(LED3);
-    HAL_Delay(300); 
-    BSP_LED_On(LED3); 
-    HAL_Delay(300);
-    BSP_LED_Off(LED3);
-    HAL_Delay(300);  
-    BSP_LED_On(LED3); 
-    HAL_Delay(300);
-    BSP_LED_Off(LED3);
-    HAL_Delay(300);   
-    BSP_LED_On(LED3); 
-    HAL_Delay(700);
-    BSP_LED_Off(LED3);
-    HAL_Delay(700); 
-    BSP_LED_On(LED3); 
-    HAL_Delay(700);
-    BSP_LED_Off(LED3);
-    HAL_Delay(700);  
-    BSP_LED_On(LED3); 
-    HAL_Delay(700);
-    BSP_LED_Off(LED3);
-    HAL_Delay(700); 
-    BSP_LED_On(LED3); 
-    HAL_Delay(300);
-    BSP_LED_Off(LED3);
-    HAL_Delay(300); 
-    BSP_LED_On(LED3); 
-    HAL_Delay(300);
-    BSP_LED_Off(LED3);
-    HAL_Delay(300);  
-    BSP_LED_On(LED3); 
-    HAL_Delay(300);
-    BSP_LED_Off(LED3);
-    HAL_Delay(800); 
-  }
-}
 
 

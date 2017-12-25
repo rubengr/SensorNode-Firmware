@@ -41,9 +41,11 @@
 #include "stm32l0538_discovery.h"
 #include "main.h"
 
-extern UART_HandleTypeDef UartHandle;
-void Error_Handler(void);
+
 void vLPUART_Init (void);
+bool bLPUART_Transmit (char* message);
+extern UART_HandleTypeDef UartHandle;
+
 
 
 #endif /* __LPUART_H */

@@ -40,6 +40,7 @@
 #include "main.h"
 #include "string.h"
 #include "LPUART.h"
+#include "ADC.h"
 
 
 /** @addtogroup STM32L0xx_HAL_Examples
@@ -54,30 +55,40 @@
 /* Private define ------------------------------------------------------------*/
 /* to enable for the board entering STOP mode,
    to disable for the board sending wake-up stimuli */
-#define BOARD_IN_STOP_MODE
+
 
 /* Private macro -------------------------------------------------------------*/
+/**
+  * @brief  Computation of voltage (unit: mV) from ADC measurement digital
+  *         value on range 12 bits.
+  *         Calculation validity conditioned to settings: 
+  *          - ADC resolution 12 bits (need to scale value if using a different 
+  *            resolution).
+  *          - Power supply of analog voltage Vdda 3.3V (need to scale value 
+  *            if using a different analog voltage supply value).
+  * @param ADC_DATA: Digital value measured by ADC
+  * @retval None
+  */
+#define COMPUTATION_DIGITAL_12BITS_TO_VOLTAGE(ADC_DATA)                        \
+  ( (ADC_DATA) * VDD_APPLI / RANGE_12BITS)
+	
 /* Private variables ---------------------------------------------------------*/
 /* UART handler declaration */
-
 UART_WakeUpTypeDef WakeUpSelection; 
 __IO uint32_t UserButtonStatus = 0;  /* set to 1 after User Button interrupt  */
      
 /* Buffer used for confirmation messages transmission */
-uint8_t aTxBuffer1[] = "RXNE wake-up successful";
-uint8_t aTxBuffer2[] = "Start bit detection wake-up successful";
-uint8_t aTxBuffer3[] = "7-bit address match wake-up successful";
-uint8_t aTxBuffer4[] = "4-bit address match wake-up successful";
+uint8_t aTxBuffer[50];
 
-uint8_t aTxBuffer[] = "Start bit detection wake-up successful";
-uint8_t aWakeUpTrigger1[] = "R";
-uint8_t aWakeUpTrigger2[] = "S";
-uint8_t aWakeUpTrigger3[] = {0xA9};
-uint8_t aWakeUpTrigger4[] = {0x82};
 
 
 /* Buffer used for reception */
 uint8_t aRxBuffer[RXBUFFERSIZE];
+
+__IO uint16_t  uhADCxConvertedValue = 0;
+__IO uint16_t  uhADCxConvertedVoltage = 0;
+
+
 
 /* Private function prototypes -----------------------------------------------*/
 static void SystemClock_Config(void);
@@ -111,7 +122,46 @@ int main(void)
 	/* Configure LPUART */
 	vLPUART_Init();
  
+	/* Configure the ADC peripheral */
+  ADC_Config();
+	
+	/* Run the ADC calibration in single-ended mode */  
+  if (HAL_ADCEx_Calibration_Start(&AdcHandle, ADC_SINGLE_ENDED) != HAL_OK)
+  {
+    /* Calibration Error */
+    Error_Handler();
+  }
+	
+	/* Configure the TIM peripheral */
+  TIM_Config(); 
+	
+	/*## Enable peripherals ####################################################*/
+
+  /* Timer counter enable */
+  if (HAL_TIM_Base_Start(&TimHandle) != HAL_OK)
+  {
+    /* Counter Enable Error */
+    Error_Handler();
+  }
   
+  /* For this example purpose, enable ADC overrun interruption. */
+  /* In this ADC LowPower example, ADC overrun is not considered as an error, */
+  /* but as a way to watch the ADC low power modes effectiveness.             */
+  /* Note: Enabling overrun has no usefulness except for this example purpose:*/
+  /*       ADC overrun cannot occur with ADC low power mode "auto-wait"       */
+  /*       Usually, in normal application, overrun is enabled automatically   */
+  /*       by HAL ADC driver with functions "HAL_ADC_Start_IT()" or           */
+  /*       "HAL_ADC_Start_DMA()", but this is not compliant with low power    */
+  /*       modes. Refer to comments of parameter "LowPowerAutoWait" in HAL    */
+  /*       ADC driver definition file.                                        */
+  __HAL_ADC_ENABLE_IT(&AdcHandle, (ADC_IT_OVR));
+
+  /* Start ADC conversion */
+  HAL_ADC_Start(&AdcHandle);
+  
+  /* Wait for the first ADC conversion to be completed (timeout unit: ms) */
+  HAL_ADC_PollForConversion(&AdcHandle, (1000/TIMER_FREQUENCY_HZ));
+	
   BSP_LED_On(LED3);
 	/* Inform other board that wake up is successful */
   if (HAL_UART_Transmit(&UartHandle, (uint8_t*)"Ruben Rodrigues\r\n", COUNTOF("Ruben Rodrigues\r\n")-1, 5000)!= HAL_OK)  
@@ -142,15 +192,15 @@ int main(void)
   BSP_LED_Off(LED3);
   /* enable MCU wake-up by LPUART */
   HAL_UARTEx_EnableStopMode(&UartHandle); 
-  /* enter stop mode */
-  HAL_PWR_EnterSTOPMode(PWR_LOWPOWERREGULATOR_ON, PWR_STOPENTRY_WFI);
+//  /* enter stop mode */
+//  HAL_PWR_EnterSTOPMode(PWR_LOWPOWERREGULATOR_ON, PWR_STOPENTRY_WFI);
 
-  /* ... STOP mode ... */  
-  
-  SystemClock_Config_fromSTOP();
-  /* at that point, MCU has been awoken: the LED has been turned back on */
-  /* Wake Up based on RXNE flag successful */ 
-  HAL_UARTEx_DisableStopMode(&UartHandle);
+//  /* ... STOP mode ... */  
+//  
+//  SystemClock_Config_fromSTOP();
+//  /* at that point, MCU has been awoken: the LED has been turned back on */
+//  /* Wake Up based on RXNE flag successful */ 
+//  HAL_UARTEx_DisableStopMode(&UartHandle);
 
   /* wait for some delay */
   HAL_Delay(100);
@@ -176,11 +226,9 @@ int main(void)
     Error_Handler();
   } 
 	
+	bLPUART_Transmit("******************MENU***************\n");
 	
-  if (HAL_UART_Transmit(&UartHandle, (uint8_t*)"************************MENU*********************\r\n", COUNTOF("************************MENU*********************\r\n")-1, 5000)!= HAL_OK)  
-  {
-    Error_Handler();
-  }
+  
   /* wait for two seconds before test second step */
   HAL_Delay(2000);
   
@@ -190,7 +238,41 @@ int main(void)
   BSP_LED_On(LED4); 
   while (1)
   {
-  }
+			/* Wait for at least 2 ADC conversions elapsed time, to let time for      */
+			/* potential overrun event to occur (unit: ms)                            */
+			HAL_Delay(2* (1000/TIMER_FREQUENCY_HZ));
+		
+			/* Manage LED3 status in function of ADC overrun event */
+			if (ubADC_overrun_status != RESET)
+			{
+				/* Turn on LED3 to indicate ADC overrun event */
+				BSP_LED_On(LED3);
+				
+				/* Reset overrun status variable for next iteration loop */ 
+				ubADC_overrun_status = RESET;
+			}
+			else
+			{ 
+				/* Turn off LED3 to indicate no ADC overrun event */
+				BSP_LED_Off(LED3);
+			}
+
+			/* Press User push-button on stm32l0538_discovery to get the converted data */
+			//while(BSP_PB_GetState(BUTTON_KEY) != GPIO_PIN_SET);
+			//while(BSP_PB_GetState(BUTTON_KEY) != GPIO_PIN_RESET);
+
+			/* Get ADC1 converted data */
+			/* If ADC low power mode auto-wait is enabled, this release the ADC */
+			/* from idle mode: a new conversion will start at the next trigger  */
+			/* event.                                                           */
+			uhADCxConvertedValue = HAL_ADC_GetValue(&AdcHandle);
+			
+			/* Compute the voltage */
+			uhADCxConvertedVoltage = COMPUTATION_DIGITAL_12BITS_TO_VOLTAGE(uhADCxConvertedValue);
+			sprintf(aTxBuffer,"Voltage: %.2fv\r\n",uhADCxConvertedVoltage);
+			bLPUART_Transmit(aTxBuffer);
+			HAL_Delay(1000);
+	}
 }
 
 
@@ -243,14 +325,15 @@ static void SystemClock_Config(void)
   RCC_ClkInitStruct.APB1CLKDivider = RCC_HCLK_DIV1;  
   RCC_ClkInitStruct.APB2CLKDivider = RCC_HCLK_DIV1;  
   HAL_RCC_ClockConfig(&RCC_ClkInitStruct, FLASH_LATENCY_1);
+	
 }
 
-#if defined(BOARD_IN_STOP_MODE)
+
 static void SystemClock_Config_fromSTOP(void)
 {
     SystemClock_Config();
 }
-#endif
+
 
 
 
@@ -311,6 +394,24 @@ void assert_failed(uint8_t* file, uint32_t line)
   }
 }
 #endif
+
+/**
+  * @brief  This function is executed in case of error occurrence.
+  * @param  None
+  * @retval None
+  */
+void Error_Handler(void)
+{
+  while(1)
+  {
+    /* User may add here some code to deal with a potential error */
+  
+    /* In case of error, LED4 is toggling at a frequency of 1Hz */
+    BSP_LED_Toggle(LED4);
+    HAL_Delay(500);
+  }
+}
+
 
 /**
   * @}

@@ -28,6 +28,10 @@ stm32l053c8_discovery\stm32l0xx_it.o: ../Drivers/STM32L0xx_HAL_Driver/Inc/stm32l
 stm32l053c8_discovery\stm32l0xx_it.o: ../Drivers/STM32L0xx_HAL_Driver/Inc/stm32l0xx_hal_pwr.h
 stm32l053c8_discovery\stm32l0xx_it.o: ../Drivers/STM32L0xx_HAL_Driver/Inc/stm32l0xx_hal_pwr_ex.h
 stm32l053c8_discovery\stm32l0xx_it.o: ../Drivers/STM32L0xx_HAL_Driver/Inc/stm32l0xx_hal_spi.h
+stm32l053c8_discovery\stm32l0xx_it.o: ../Drivers/STM32L0xx_HAL_Driver/Inc/stm32l0xx_hal_tim.h
+stm32l053c8_discovery\stm32l0xx_it.o: ../Drivers/STM32L0xx_HAL_Driver/Inc/stm32l0xx_hal_tim_ex.h
 stm32l053c8_discovery\stm32l0xx_it.o: ../Drivers/STM32L0xx_HAL_Driver/Inc/stm32l0xx_hal_uart.h
 stm32l053c8_discovery\stm32l0xx_it.o: ../Drivers/STM32L0xx_HAL_Driver/Inc/stm32l0xx_hal_uart_ex.h
 stm32l053c8_discovery\stm32l0xx_it.o: ../Drivers/BSP/STM32L0538-Discovery/stm32l0538_discovery.h
+stm32l053c8_discovery\stm32l0xx_it.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\stdbool.h
+stm32l053c8_discovery\stm32l0xx_it.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\string.h
